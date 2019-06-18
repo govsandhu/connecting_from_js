@@ -13,19 +13,20 @@ const client = new pg.Client({
 
 
 const queryType = process.argv.slice(2)[0];
-let first_name = process.argv.slice(2)[0]; 
+let name = process.argv.slice(2)[0]; 
 
-client.connect((err) => {
+client.connect((err, cb) => {
   if (err) {
     return console.error("Connection Error", err);
   }
-  console.log('connected to the pg server')
-
-  client.query('SELECT * FROM famous_people WHERE first_name = $1', [first_name], (err,res) => {
-          if (err) throw err;
+  console.log('Searching...');
+});
+  
+  client.query('SELECT * FROM famous_people WHERE first_name = $1 OR last_name = $1', [name], (err,res) => {
+    if (err) throw err;
+          console.log(`Found ${res.rows.length} person(s) by the name ${name}':`)
           for (const person of res.rows) {
-            console.log(`${person.id}: ${person.first_name} ${person.last_name}, born '${moment(person.birthdate).format("YYYY-MM-DD")}'`)
+            console.log(`-${person.id}: ${person.first_name} ${person.last_name}, born '${moment(person.birthdate).format("YYYY-MM-DD")}'`)
           }
           client.end();
-  })
-});
+  });
