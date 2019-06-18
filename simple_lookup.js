@@ -15,12 +15,11 @@ const client = new pg.Client({
 const queryType = process.argv.slice(2)[0];
 let name = process.argv.slice(2)[0]; 
 
-client.connect((err, cb) => {
+client.connect((err) => {
   if (err) {
     return console.error("Connection Error", err);
   }
   console.log('Searching...');
-});
   
   client.query('SELECT * FROM famous_people WHERE first_name = $1 OR last_name = $1', [name], (err,res) => {
     if (err) throw err;
@@ -30,3 +29,4 @@ client.connect((err, cb) => {
           }
           client.end();
   });
+});
